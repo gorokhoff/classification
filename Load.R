@@ -47,6 +47,10 @@
   train <- idt[split,]
   test <- idt[!split,]
   
+  library(caret)
+  fitControl <- trainControl(method="cv", number=5)
+  forest_full <- train(y~., data=train, method="rf", do.trace=10, ntree=100, trControl = fitControl)
+  
   library(randomForest)
   model.rf<-randomForest(y ~., train, importance = TRUE, proximity=TRUE,do.trace=TRUE)
   
@@ -68,12 +72,18 @@
   idt<-dropBind(idt,model.matrix(~x22,dt))
   drops <- c("x5","x0","x9","x10","x11","x12","x14","x15","x16","x17","x18","x19","x20","x21","x22")
   idt<-idt[,!(names(idt) %in% drops)]
-  
+
+  drops <- c("y")
+  idt1<-idt[,!(names(idt) %in% drops)]
+  idt2<-scale(idt1)
+  memory.limit(32764)
+  pca<-princomp(idt2)
+  save(pca, file = "pca.rda")
   #library(FactoMineR)
   #dt.pca<-prcomp(dt)
   #install.packages("randomForest")
 
-
+  data <- t(t(pca$scores[, 1:100] %*% t(pca$loadings[, 1:100 ])) * pca$scale + pca$center)
 
 #  numIndex<-sapply(sub.0, is.numeric)
 #  factorIndex<-sapply(sub.0, is.factor)
