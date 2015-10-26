@@ -66,3 +66,20 @@ comparer<-function(a,b){if(a == b) {
   0
 }}
 
+getMainVars<-function(df, d , l){
+  c<-seq(1000,l, by=1000)
+  c<-append(c,l)
+  names1<-c()
+  for(i in 1:length(c)){
+    tb<-c[i]
+    lb<-tb-999
+    disp<-apply(idt[lb:tb], 2 , var)
+    disp1<-sort(disp, decreasing = FALSE)
+    disp11<-disp1[disp1>d]
+    names2<-names(disp11)
+    print(length(names2))
+    names1<-append(names1, names2)
+  
+  }
+  names1
+}
